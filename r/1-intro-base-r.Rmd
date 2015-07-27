@@ -1,0 +1,307 @@
+---
+output: html_document
+---
+# Introduction
+
+```{r, echo=FALSE, results='hide'}
+library('knitr')
+opts_chunk$set(prompt=TRUE, comment=NA, collapse=TRUE)
+```
+
+## R and R Studio
+
+R is an open-source statistical programming language, good for data analysis, modelling and visualization.
+
+Base R is the foundation of the language. Base R is extended with packages.
+
+Packages are available from CRAN (The Comprehensive R Archive Network). Use the CRAN Task Views to determine which packages meet a statistical requirement you have.
+
+RStudio Desktop is an integrated development environment (IDE) that makes R easier to use.
+
+RStudio sits on top of R but does not replace R.
+
+R, RStudio and packages are updated frequently.
+
+## Getting to Know RStudio
+
+The RStudio Desktop IDE has four panes:
+
+- Source
+- Console
+- Environment and History
+- Files and Output
+
+Use Alt+Shift+k to view the keyboard shortcuts. Especially note Ctrl+1 to move the cursor to Source and Ctrl+2 to move the cursor to the Console.
+
+# Using Base R
+
+## Scalars
+
+Interactively enter numeric expressions to create scalar values. You can also use arithmetic operators.
+
+```{r}
+1
+1 + 2
+5 - 2
+5 * 6
+24 / 6
+```
+
+Logical operators will output a TRUE or FALSE value.
+
+```{r}
+1 < 2
+1 > 2
+2 == 2
+2 != 2
+2 >= 3
+2 <= 3
+```
+
+The output of an expression can be saved using the `<-` assignment operator.
+
+```{r}
+a <- 5 * 4
+a
+```
+
+## Vectors
+
+Vectors are an integral part of R. Use the `:` operator to create vector sequences.
+
+```{r}
+1:10
+10:1
+length(1:10)
+```
+
+The `c()` function combines values into a vector.
+
+```{r}
+c(1, 13, 7, 5)
+x <- c(1, 13, 7, 5)
+length(x)
+sum(x)
+mean(x)
+```
+
+Notice that the arithmetic operators work element-wise on vectors.
+
+```{r}
+a <- 1:4
+b <- 5:8
+
+a
+b
+
+a + b
+a - b
+a * b
+a / b
+```
+
+Logical operators also work element-wise.
+
+```{r}
+a <- 1:5
+b <- 5:1
+
+a
+b
+
+a == b
+a > b
+a < b
+a >= b
+a <= b
+```
+
+The `[1]` from the output is indicating the first element of the vector. We saw that with scalar values also. In fact, scalar values in R are simply vectors of length 1.
+
+```{r}
+1:100
+```
+
+If you operate on vectors of unequal lengths, the shorter vector will be recycled.
+
+```{r}
+a <- 1:10
+b <- c(10, 100)
+
+a
+b
+
+a + b # The result is length 10
+```
+
+## Vector Indexing
+
+### Positional Indexing
+
+Use the brackets to index into a specific vector element.
+
+```{r}
+x <- c(1, 13, 7, 5)
+x
+
+x[1]
+x[2]
+x[3]
+x[4]
+x[5] # Returns NA
+```
+
+The special `NA` value indicates that the result is not available.
+
+You can index with a vector of positions.
+
+```{r}
+x
+
+x[3:4]
+```
+
+### Logical Indexing
+
+You can index with logical vectors.
+
+```{r}
+x
+
+x[c(TRUE, FALSE, TRUE, FALSE)]
+```
+
+Recall that a comparison operator will return a logical vector, such as `x > 6`. What will `x[x > 6]` return?
+
+```{r}
+x[x > 6]
+```
+
+### Indexing for Sorting
+
+Indexing is not always used to subset. It can also be used to order vector elements.
+
+Examine the output of the `order()` function. What does this produce?
+
+```{r}
+order(x)
+```
+
+Since `order()` is outputting index positions in the sorted order, how would you use this function to sort the `x` vector?
+
+```{r}
+x[order(x)]
+```
+
+### Indexing for Replacement
+
+You can assign new values to indexed elements.
+
+```{r}
+x
+x[2] <- 17
+x
+```
+
+## Data Frames
+
+Data frames are tables built from equal length vectors.
+
+```{r}
+mtcars
+```
+
+Indexing data frames follows the same principles as vector indexing, except now we're dealing with two dimensions. Indexing is based on `data[rows, columns]`
+
+```{r}
+mtcars[1, 3] # Value from row 1 column 3
+mtcars[1,  ] # Leave columns blank to return a row with all columns
+mtcars[ , 1] # Leave the rows blank to return only a single column  
+```
+
+Since column indexing is common, there are shortcuts.
+
+```{r}
+mtcars$cyl       # Use the $ operator to obtain a single column as a vector
+mtcars[ , 'cyl'] # or refer to the column by name, rather than position
+```
+
+Use `str()` to view the structure of a data frame.
+
+```{r}
+str(mtcars)
+```
+
+Use `names()` to obtain and change column names.
+
+```{r}
+names(mtcars)
+names(mtcars)[9]
+names(mtcars)[9] <- "transmission"
+names(mtcars)
+```
+
+### Example: Using a logical vector and vectorized function to recode variables
+
+The transmission (am) column holds a `0` if the car has an automatic transmission and a `1` for a manual transmission. Our job is to recode the ones and zeros to text.
+
+```{r}
+# Step 1: create a logical vector of the items you wish to change
+mtcars$transmission == 1 
+# Step 2: Use the vectorized ifelse() function to create the desired vector
+ifelse(mtcars$transmission == 1, "manual", "automatic")
+# Step 3: Assign the new vector to the data frame
+mtcars$transmission <- ifelse(mtcars$transmission == 1, "manual", "automatic")
+
+mtcars
+```
+
+> Exercise: Write code to find the mean mpg for the eight cylinder cars only.
+
+```{r}
+mean(mtcars[mtcars$cyl == 8, 'mpg'])
+```
+
+> Exercise: Order the `mtcars` dataframe by mpg.
+
+```{r}
+mtcars[order(mtcars$mpg), ]
+```
+
+## Tables
+
+R can easily tabulate data. For example: How many cars have 4, 6 or 8 cylinders?
+
+```{r}
+table(mtcars$cyl)
+```
+
+Two (or more) dimensional tables are also possible.
+
+```{r}
+table(mtcars$transmission, mtcars$cyl)
+```
+
+Use `addmargins()` to add the category sums or `prop.table()` to create proportion tables.
+
+```{r}
+tbl <- table(mtcars$transmission, mtcars$cyl)
+addmargins(tbl)
+prop.table(tbl)
+```
+
+## Base Graphics
+
+Base Graphics are the plotting functions included with Base R. Other packages such as `ggplot2` extend R's plotting capabilities.
+
+```{r}
+plot(mtcars$wt, mtcars$mpg) # As weight increases, mpg decreases
+hist(mtcars$mpg)
+boxplot(mpg ~ cyl, data = mtcars)
+```
+
+## Coding Style
+
+Code is read more often than it is written so proper style, commenting, and formatting is important, especially if you are sharing code with others.
+
+Review Hadley Wickham's R Style Guide for details at http://adv-r.had.co.nz/Style.html.
