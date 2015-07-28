@@ -13,6 +13,12 @@ library(tidyr, warn.conflicts = FALSE)
 library(dplyr, warn.conflicts = FALSE)
 ```
 
+Prerequisite: please copy the car names into the mtcars dataframe:
+
+```{r}
+mtcars$model <- rownames(mtcars)
+```
+
 ## Tidy Data
 
 https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html
@@ -97,3 +103,135 @@ morley %>%
 ```
 
 ## Dplyr
+
+Most of this content is from the Introduction to Dplyr at http://rstudio-pubs-static.s3.amazonaws.com/11068_8bc42d6df61341b2bed45e9a9a3bf9f4.html
+
+> When working with data you must:
+>
+> - Figure out what you want to do.
+> - Precisely describe what you want in the form of a computer program.
+> - Execute the code.
+
+> dplyr aims to make each of these steps as fast and easy as possible by:
+>
+> - Elucidating the most common data manipulation operations, so that your options are helpfully constrained when thinking about how to tackle a problem.
+> - Providing simple functions that correspond to the most common data manipulation verbs, so that you can easily translate your thoughts into code.
+> - Using efficient data storage backends, so that you spend as little time waiting for the computer as possible.
+
+### Five Basic Verbs
+
+Dplyr provides five basic verbs: `filter()`, `arrange()`, `select()`, `mutate()` and `summarise()`
+
+#### Filter()
+
+Filter rows.
+
+```{r}
+pricescope_tidy_data %>%
+  filter(lab == 'GIA')
+```
+
+> Exercise: Using Dplyr syntax, filter the `mtcars` dataset for cars that achieve 25 mpg or greater.
+
+```{r}
+mtcars %>%
+  filter(mpg >= 25)
+```
+
+#### Arrange()
+
+Arrange rows in order.
+
+```{r}
+pricescope_tidy_data %>%
+  arrange(lab, stone)
+```
+
+> Exercise: Order the `mtcars` dataframe by mpg using the `arrange()` function.
+
+```{r}
+mtcars %>%
+  arrange(mpg)
+```
+
+> Exercise: Do the filter (>= 25 mpg) and arrange in one statement
+
+```{r}
+mtcars %>%
+  filter(mpg >= 25) %>%
+  arrange(mpg)
+```
+
+#### Select()
+
+Select columns.
+
+```{r}
+mtcars %>%
+  filter(mpg >= 25) %>%
+  arrange(mpg) %>%
+  select(model, mpg, cyl, disp)
+```
+
+#### Mutate()
+
+Add new columns.
+
+```{r}
+mtcars %>%
+  mutate(rank = dense_rank(desc(mpg))) %>%
+  select(model, mpg, rank)
+```
+
+#### Summarize()
+
+Collapse dataframe into a single row.
+
+```{r}
+mtcars %>%
+  summarize(median_mpg = median(mpg))
+```
+
+### Add in some Grouping
+
+In dplyr, you use the group_by() function to describe how to break a dataset down into groups. You can then use the resulting object in the exactly the same functions as above.
+
+What are the mean miles per gallon by cylinder?
+
+```{r}
+mtcars %>%
+  group_by(cyl) %>%
+  summarize(mean_mpg = mean(mpg))
+```
+
+> Exercise: Extend the previous statement to find the minimum and maximum mpg for each cylinder group.
+
+```{r}
+mtcars %>%
+  group_by(cyl) %>%
+  summarize(mean_mpg = mean(mpg),
+            max_mpg = max(mpg),
+            min_mpg = min(mpg))
+```
+
+> Exercise: Rank the cars by mpg (with the highest mpg = 1) within each cylinder group. Hint: use `mutate()`. Order the rows by rank and cyl.
+
+Since we are only adding a column, use mutate.
+
+It doesn't work! By default, `dplyr`'s arrange will not respect grouping. You must `ungroup()` first.
+
+```{r}
+mtcars_ranked <- mtcars %>%
+  group_by(cyl) %>%
+  mutate(rank = dense_rank(desc(mpg))) %>%
+  select(model, cyl, mpg, rank) %>%
+  ungroup() %>%
+  arrange(rank, cyl)
+mtcars_ranked
+```
+
+### Window Functions
+
+We've only brushed the surface of what is possible. Try the Window functions vignette. 
+
+https://cran.r-project.org/web/packages/dplyr/vignettes/window-functions.html
