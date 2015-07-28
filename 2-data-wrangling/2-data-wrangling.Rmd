@@ -1,0 +1,99 @@
+---
+output: 
+  html_document: 
+    keep_md: yes
+---
+# Data Wrangling
+
+```{r, echo=FALSE, results='hide'}
+library('knitr')
+opts_chunk$set(prompt=TRUE, comment=NA, collapse=TRUE)
+
+library(tidyr, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE)
+```
+
+## Tidy Data
+
+https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html
+
+> Tidy datasets provide a standardized way to link the structure of a dataset (its physical layout) with its semantics (its meaning).
+
+Hadley Wickham provides a philosophical foundation for managing data in his Tidy data paper. We'll work through examples similar to the data shown in the paper.
+
+### Data Structure
+
+The data are from http://www.pricescope.com/wiki/diamond-grading/appendix-ii
+
+```{r}
+pricescope_data <- read.delim('pricescope_data.txt', stringsAsFactors = FALSE)
+pricescope_data
+```
+
+Another way to represent the same data:
+
+```{r}
+pricescope_data2 <- read.delim('pricescope_data2.txt', stringsAsFactors = FALSE)
+pricescope_data2
+```
+
+In tidy data:
+
+1. Each variable forms a column
+2. Each observation forms a row
+3. Each type of observational unit forms a row
+
+In relational databases, this is Third Normal Form.
+
+```{r, eval=-(1:2), echo = FALSE}
+library(tidyr)
+library(dplyr)
+
+pricescope_tidy_data <- pricescope_data %>%
+  gather(stone, grade, X1:X17) %>%
+  mutate(stone = gsub("X", "", stone)) %>%
+  mutate(stone = as.numeric(stone)) %>%
+  arrange(lab, stone)
+pricescope_tidy_data
+```
+
+### Tidying Data when Column Headers are Values, Not Variable Names
+
+Our dataset has three variables: lab, stone and grade. To tidy it, we need to _gather_ the values from the headers.
+
+The `gather` function takes three arguments:
+
+1. The name of the _key_ column. That is, the new name of the column that is currently encoded in the headers.
+2. The name  of the _value_ column. That is, the new name of the column that is currently held in the data points.
+3. The columns to gather.
+
+```{r}
+pricescope_tidy_data <- pricescope_data %>%
+  gather(stone, grade, X1:X17)
+pricescope_tidy_data
+```
+
+### The Pipe
+
+The `%>%` pipe helps code readability by piping data from one function to the next.
+
+`f(x, y)` is the same as `x %>% f(y)`
+
+The above code could have been written as:
+
+```{r, results='hide'}
+gather(pricescope_data, stone, grade, X1:X17)
+```
+
+### Spreading Tidy Data
+
+The `tidyr` package makes it easy to pivot data back into wide format.
+
+```{r}
+morley
+
+morley %>%
+  spread(Run, Speed)
+```
+
+## Dplyr
