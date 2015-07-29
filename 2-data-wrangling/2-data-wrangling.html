@@ -110,7 +110,7 @@ img {
 <ol style="list-style-type: decimal">
 <li>Each variable forms a column</li>
 <li>Each observation forms a row</li>
-<li>Each type of observational unit forms a row</li>
+<li>Each type of observational unit forms a table</li>
 </ol>
 <p>In relational databases, this is Third Normal Form.</p>
 <pre><code>   lab stone grade
@@ -622,7 +622,7 @@ Source: local data frame [3 x 4]
 <p>Exercise: Rank the cars by mpg (with the highest mpg = 1) within each cylinder group. Hint: use <code>mutate()</code>. Order the rows by rank and cyl.</p>
 </blockquote>
 <p>Since we are only adding a column, use mutate.</p>
-<p>It doesn’t work! By default, <code>dplyr</code>’s arrange will not respect grouping. You must <code>ungroup()</code> first.</p>
+<p>It doesn’t work! By default, <code>dplyr</code>’s arrange will respect grouping. You must <code>ungroup()</code> first.</p>
 <pre class="r"><code>&gt; mtcars_ranked &lt;- mtcars %&gt;%
 +   group_by(cyl) %&gt;%
 +   mutate(rank = dense_rank(desc(mpg))) %&gt;%

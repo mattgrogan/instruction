@@ -65,7 +65,7 @@ In tidy data:
 
 1. Each variable forms a column
 2. Each observation forms a row
-3. Each type of observational unit forms a row
+3. Each type of observational unit forms a table
 
 In relational databases, this is Third Normal Form.
 
@@ -629,7 +629,7 @@ Source: local data frame [3 x 4]
 
 Since we are only adding a column, use mutate.
 
-It doesn't work! By default, `dplyr`'s arrange will not respect grouping. You must `ungroup()` first.
+It doesn't work! By default, `dplyr`'s arrange will respect grouping. You must `ungroup()` first.
 
 
 ```r
