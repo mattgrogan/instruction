@@ -2,7 +2,7 @@
 
 
 
-Prerequisite: please copy the car names into the mtcars dataframe:
+Prerequisite: please copy the model names into the mtcars dataframe:
 
 
 ```r
