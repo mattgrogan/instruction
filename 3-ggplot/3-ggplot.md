@@ -224,6 +224,16 @@ Also note the shortcut functions `xlim` and `ylim`.
 
 ## A Few Other Geoms
 
+### Text
+
+
+```r
+> ggplot(mtcars, aes(x = wt, y = mpg, label = model)) +
++   geom_text()
+```
+
+![](3-ggplot_files/figure-html/unnamed-chunk-17-1.png) 
+
 ### Smoothing
 
 Nothing says you have to have only one geom!
@@ -236,7 +246,7 @@ Nothing says you have to have only one geom!
 geom_smooth: method="auto" and size of largest group is <1000, so using loess. Use 'method = x' to change the smoothing method.
 ```
 
-![](3-ggplot_files/figure-html/unnamed-chunk-17-1.png) 
+![](3-ggplot_files/figure-html/unnamed-chunk-18-1.png) 
 
 #### Boxplot
 
@@ -246,7 +256,7 @@ geom_smooth: method="auto" and size of largest group is <1000, so using loess. U
 +   geom_boxplot() 
 ```
 
-![](3-ggplot_files/figure-html/unnamed-chunk-18-1.png) 
+![](3-ggplot_files/figure-html/unnamed-chunk-19-1.png) 
 
 #### Density and Histograms
 
@@ -257,7 +267,7 @@ geom_smooth: method="auto" and size of largest group is <1000, so using loess. U
 stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
 ```
 
-![](3-ggplot_files/figure-html/unnamed-chunk-19-1.png) 
+![](3-ggplot_files/figure-html/unnamed-chunk-20-1.png) 
 
 
 ```r
@@ -265,7 +275,7 @@ stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
 +   geom_density(alpha = 0.50) 
 ```
 
-![](3-ggplot_files/figure-html/unnamed-chunk-20-1.png) 
+![](3-ggplot_files/figure-html/unnamed-chunk-21-1.png) 
 
 #### Line
 
@@ -275,6 +285,37 @@ stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
 +   geom_line()
 ```
 
-![](3-ggplot_files/figure-html/unnamed-chunk-21-1.png) 
+![](3-ggplot_files/figure-html/unnamed-chunk-22-1.png) 
 
 ## Customizing the Look and Feel
+
+There are shortcuts for `xlab`, `ylab` and `ggtitle`.
+
+
+```r
+> ggplot(diamonds, aes(x = carat, y = price, color = clarity)) +
++   geom_point() +
++   ylab("Price in USD") +
++   xlab("Carat Weight") +
++   ggtitle("The Effect of Carat Weight on Diamond Price")
+```
+
+![](3-ggplot_files/figure-html/unnamed-chunk-23-1.png) 
+
+Use `theme()` for complete control
+
+
+```r
+> ggplot(diamonds, aes(x = carat, y = price, color = clarity)) +
++   geom_point() +
++   theme(
++     axis.title = element_text(color = "red", size = 20), # Increase the axis labels and make red
++     legend.position = "bottom"
++   )
+```
+
+![](3-ggplot_files/figure-html/unnamed-chunk-24-1.png) 
+
+See the `ggthemes` package for prebuilt themes.
+
+https://github.com/jrnold/ggthemes

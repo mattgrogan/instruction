@@ -188,6 +188,13 @@ Also note the shortcut functions `xlim` and `ylim`.
 
 ## A Few Other Geoms
 
+### Text
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg, label = model)) +
+  geom_text()
+```
+
 ### Smoothing
 
 Nothing says you have to have only one geom!
@@ -225,3 +232,28 @@ ggplot(economics, aes(x = date, y = unemploy)) +
 ```
 
 ## Customizing the Look and Feel
+
+There are shortcuts for `xlab`, `ylab` and `ggtitle`.
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price, color = clarity)) +
+  geom_point() +
+  ylab("Price in USD") +
+  xlab("Carat Weight") +
+  ggtitle("The Effect of Carat Weight on Diamond Price")
+```
+
+Use `theme()` for complete control
+
+```{r}
+ggplot(diamonds, aes(x = carat, y = price, color = clarity)) +
+  geom_point() +
+  theme(
+    axis.title = element_text(color = "red", size = 20), # Increase the axis labels and make red
+    legend.position = "bottom"
+  )
+```
+
+See the `ggthemes` package for prebuilt themes.
+
+https://github.com/jrnold/ggthemes
